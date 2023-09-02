@@ -1,38 +1,23 @@
-import dotenv from 'dotenv'
-dotenv.config()
+// import express from 'express'
+// import axios from 'axios'
+// import cors from 'cors'
 
-import express from 'express'
-import cookieParser from "cookie-parser"
-import cors from 'cors'
-import fileUpload from 'express-fileupload'
-import mongoose from 'mongoose'
-import {auth} from 'express-openid-connect'
+// const app = express()
 
-mongoose.connect(process.env.MONGO_URI as string).finally(() => console.log("Mongo is running")).catch(er => console.error(er))
-const app = express()
+// app.use(express.json())
+// app.use(express.urlencoded({extended: false}))
+// app.use(cors({
+// 	origin: "http://localhost:5173",
+// 	credentials: true
+// }))
 
-const config = {
-	authRequired: false,
-	auth0Logout: true,
-	secret: '8k0P4bAOdMRoUXOK-Xw_Jy_RBsOEKJos_QDvqp2mXhDQRGNc2-0Iough_2c5uUhW',
-	baseURL: 'http://localhost:5040',
-	clientID: 'AWJme7NDkcKZ6PDEaK4tfP24Je0F6njV',
-	issuerBaseURL: 'https://dev-8zv35067fw68fvcx.us.auth0.com'
-  };
-  
-  
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser(process.env.COOKIE_SECRET))
-app.use(cors({origin: "http://localhost:5173" , credentials: true}))
-app.use(fileUpload())
-app.set("trust proxy", true);
-app.use(auth(config));
+// app.get('/api/geofind', async (req, res) => {
+// 	const ip = req.ip.split(':').at(-1)
+// 	const geo = await axios.get("https://ipinfo.io/176.58.132.26?token=1bfd2c92f0f7b8")
+// 	console.log(geo.data)
+// 	res.json({ipData: geo.data})
+// })
 
-import authRouter from './routes/profile.route'
-// app.use('/api/auth', authRouter)
-app.use('/api/video-init', authRouter)
-
-app.listen(process.env.PORT || 5040, () => {
-	console.log("Running on Port:", process.env.PORT || 5040)
-})
+// app.listen(5040, () => {
+// 	console.log('listening on 5040')
+// })

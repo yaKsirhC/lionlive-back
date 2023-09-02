@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
 import { Server } from "socket.io";
-import { Matchfilters, UserInfo, UserInfoRTC, webRTCPeerConfiguration } from "../types";
+import { Matchfilters, UserInfoRTC, webRTCPeerConfiguration } from "../types";
 
 class Pool {
   connections: { config: webRTCPeerConfiguration, socketID: string }[] = [];
@@ -42,7 +42,7 @@ class Pool {
       }
     }
     
-    console.log('no way')
+    console.log('no match for you lol')
 
     this.connections.push(peer as any);
   }
@@ -94,6 +94,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on('disconnect-from-pool', () => {
+    console.log('Disconnecting: ', socket.id)
     userPool.removeConnection(socket.id)
   })
 
