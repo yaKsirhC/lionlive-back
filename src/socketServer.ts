@@ -31,12 +31,8 @@ class Pool {
       if (highestPoint == threshhold) {
         // Delete Old From pool
         this.connections.splice(i, 1)
-        console.log('found Match!!')
-        const oldest = available.socketID
-        const newest = peer.socketID
-        
-        io.to(oldest).emit("caller", newest)
-        io.to(newest).emit("callee", oldest)
+        io.to(available.socketID).emit("caller", peer)
+        io.to(peer.socketID).emit("callee", available)
         
         return;
       }
@@ -74,7 +70,7 @@ class Pool {
 
 const io = new Server({
   cors: {
-    origin: "http://localhost:5173"
+    origin: "*"
   }
 });
 
@@ -85,6 +81,7 @@ io.on("connection", (socket) => {
   console.log('connection made:', socket.id)
 
   socket.on("request-init", (config: any) => {
+    console.log(config)
     userPool.addConnection({config, socketID: socket.id});
   });
 
