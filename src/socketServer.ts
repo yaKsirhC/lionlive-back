@@ -3,6 +3,15 @@
 import { Server } from "socket.io";
 import { Matchfilters, UserInfoRTC, webRTCPeerConfiguration } from "../types";
 
+function ageFromDate(birthdate: Date) {
+  const today = new Date();
+  const age =
+    today.getFullYear() -
+	// @ts-ignore
+    birthdate.getFullYear() - (today.getMonth() < birthdate.getMonth() || (today.getMonth() === birthdate.getMonth() && today.getDate() < birthdate.getDate()));
+  return age;
+}
+
 class Pool {
   connections: { config: webRTCPeerConfiguration, socketID: string }[] = [];
   io: Server;
@@ -33,7 +42,7 @@ class Pool {
         this.connections.splice(i, 1)
         io.to(available.socketID).emit("caller", peer)
         io.to(peer.socketID).emit("callee", available)
-        
+          console.log('found match!')
         return;
       }
     }
@@ -48,10 +57,10 @@ class Pool {
 
     if (filters1.age) {
       const [start, end] = filters1.age;
-
+      const yold = ageFromDate(new Date(requestor2.birthDate))
       if (
-        start <= new Date(requestor2.birthDate).getTime() &&
-        new Date(requestor2.birthDate).getTime() <= end
+        start <= yold &&
+        yold <= end
       ) {
         score++;
       }
@@ -60,7 +69,7 @@ class Pool {
       filters1.gender == requestor2.gender && score++;
     }
     if (filters1.region) {
-      filters1.region == requestor2.location && score++;
+      filters1.region == requestor2.geolocationCoordinates && score++;
     }
 
     return score;
@@ -80,12 +89,18 @@ io.on("connection", (socket) => {
 
   console.log('connection made:', socket.id)
 
+  socket.on("join-self", data => {
+    console.log("joined self: ", data)
+    socket.join(data)
+  })
+
   socket.on("request-init", (config: any) => {
-    console.log(config)
+    // console.log(config)
     userPool.addConnection({config, socketID: socket.id});
   });
 
   socket.on("send-direct", data => {
+    console.log('redirecting: ', data)
     const receiver = data.receiver;
     socket.to(receiver).emit(data.event, data.body) 
   })

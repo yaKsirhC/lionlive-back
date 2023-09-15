@@ -29,7 +29,7 @@ export interface webRTCPeerConfiguration {
 export interface UserInfoRTC {
 	birthDate: Date,
 	gender?: string,
-	location: string,
+	geolocationCoordinates: string,
 	videoType?: "solo" | "duo"
 }
 
